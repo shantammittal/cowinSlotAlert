@@ -21,6 +21,10 @@
 
 - Many existing app send out an email or telegram message, which we tend to miss out. So this app will alert you once the slot is available resulting in increase chance of booking.
 
+ What happens once the slot is available ?
+- You will be redirected to cowin login page.
+- You will be alerted via vide playback.
+
  How does the app play video on my pc ?
 
 - Since the alert is coming from your own machine. You would need to run it on your machine. It cannot be run centerally like other email alerting apps.
