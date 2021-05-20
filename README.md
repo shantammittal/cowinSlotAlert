@@ -41,11 +41,11 @@
  Why are we fetching the data for current date only and not for future dates?
 - The api always returns session for next five day from current date. Hence I am making single call with current date.
 
-What is the age limit parameter in application.properties?
-- Filter the data as per center min age limit. 
-- For example if you want to find slots for 45  above set age=45
-- If you want to find slots for 18 above set age=18
-- If you want to find for both age group you should comment this property.
+What is the age parameter in application.properties?
+- You can configure the parameter as per below info
+- 18  : if you want slots for age group [18-44]
+- 45  : if you want slots for age group 45+
+- leave it blank : if you want slots for age group 18+
 
 What does the pincode property do ?
 - Change this to the pincode where you want to find slots.

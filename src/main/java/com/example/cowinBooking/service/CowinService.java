@@ -39,8 +39,6 @@ public class CowinService {
 
     @Scheduled(cron = "${frequency}")
     public void findByPinCodeAndDateCron() throws IOException, URISyntaxException {
-        log.info(System.getProperty("os.name"));
-        log.info("age: " + ageLimit);
         String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/json");
@@ -52,14 +50,14 @@ public class CowinService {
         if (ageLimit.equals("")) {
             calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0).count() > 0);
         } else {
-            calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() >= Integer.parseInt(ageLimit)).count() > 0);
+            calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() == Integer.parseInt(ageLimit)).count() > 0);
         }
         List<CalendarResponseSchema> collect = calendarResponseSchemaStream.collect(Collectors.toList());
 
 
         if (collect.size() > 0) {
             Runtime runtime = Runtime.getRuntime();
-
+            log.info("Slot available for booking. Head to www.cowin.gov.in");
             if (System.getProperty("os.name").contains("Windows")) {
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else if (System.getProperty("os.name").contains("Mac")) {
