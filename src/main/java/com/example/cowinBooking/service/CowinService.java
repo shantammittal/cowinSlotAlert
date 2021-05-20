@@ -64,9 +64,7 @@ public class CowinService {
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else if (System.getProperty("os.name").contains("Mac")) {
                 runtime.exec("open " + url);
-
             }
-
         }
     }
 }

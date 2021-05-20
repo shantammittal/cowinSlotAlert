@@ -10,11 +10,12 @@
 
 - Java 11
 - Maven 3.+
+- Windows, Mac
 
 #FAQ
  What this app does ?
  
-- It Alerts you by making a sound once the slot is available. In this case it plays a youtube video.
+- It alerts you by playing a video on your machine.
  
  Rationale behind the app ?
 
@@ -53,5 +54,5 @@ What does the pincode property do ?
 - mvn clean install
 - Change pincode in application.properties to your current location
 - Change age to 18, 45 or "" if you want to search for both group 
-- Using Intellij IDE - Run CowinBookingApplication
-- or java -jar cowinBooking-*.jar
+- Intellij IDE - Run CowinBookingApplication
+- java -jar cowinBooking-*.jar
