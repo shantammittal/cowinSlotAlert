@@ -60,8 +60,10 @@ public class CowinService {
             log.info("Slot available for booking. Head to www.cowin.gov.in");
             if (System.getProperty("os.name").contains("Windows")) {
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+                runtime.exec("rundll32 url.dll,FileProtocolHandler " + "https://selfregistration.cowin.gov.in/");
             } else if (System.getProperty("os.name").contains("Mac")) {
                 runtime.exec("open " + url);
+                runtime.exec("open " + "https://selfregistration.cowin.gov.in/");
             }
         }
     }
