@@ -2,6 +2,7 @@ package com.example.cowinBooking.service;
 
 import com.example.cowinBooking.model.CalendarResponseSchema;
 import com.example.cowinBooking.model.CalendarResponseSchemaList;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class CowinService {
 
     @Autowired
@@ -35,53 +37,32 @@ public class CowinService {
     @Value("${ageLimit}")
     String ageLimit;
 
-    /*public List<CalendarResponseSchema> findByPinCodeAndDate() {
-        String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        System.out.print("checking ");
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("accept", "application/json");
-        headers.set("user-agent", "Mozilla/5.0");
-        HttpEntity request = new HttpEntity(headers);
-        LocalDate.now();
-        ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList = restTemplate.exchange("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=+" + pinCode + "&date=" + localDate, HttpMethod.GET, request, CalendarResponseSchemaList.class);
-        System.out.print(calendarResponseSchemaList.getStatusCode() + "  size: ");
+    @Value("${url}")
+    String url;
 
-        Stream<CalendarResponseSchema> calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() >= Integer.parseInt(ageLimit)).count() > 0);
-//        Stream<CalendarResponseSchema> calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit()==45).collect(Collectors.toList()).size() > 0);  //use this for slots age group >45 only
-
-        List<CalendarResponseSchema> collect = calendarResponseSchemaStream.collect(Collectors.toList());
-        System.out.println(collect.size());
-
-        return collect;
-    }*/
-
-
-    @Scheduled(cron = "0 */2 * * * *")
-    public List<CalendarResponseSchema> findByPinCodeAndDateCron() throws IOException, URISyntaxException {
-        System.out.println(ageLimit);
+    @Scheduled(cron = "${frequency}")
+    public void findByPinCodeAndDateCron() throws IOException, URISyntaxException {
+        log.info(System.getProperty("os.name"));
         String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/json");
         headers.set("user-agent", "Mozilla/5.0");
         HttpEntity request = new HttpEntity(headers);
-        LocalDate.now();
-        ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList = restTemplate.exchange("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=132103&date=" + localDate, HttpMethod.GET, request, CalendarResponseSchemaList.class);
-        System.out.print(calendarResponseSchemaList.getStatusCode() + "  size: ");
-
+        ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList = restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=%s&date=%s", pinCode, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
         Stream<CalendarResponseSchema> calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() >= Integer.parseInt(ageLimit)).count() > 0);
-//        Stream<CalendarResponseSchema> calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit()==45).collect(Collectors.toList()).size() > 0);  //use this for slots age group >45 only
-
         List<CalendarResponseSchema> collect = calendarResponseSchemaStream.collect(Collectors.toList());
-        System.out.println(collect.size());
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        System.out.println(Desktop.isDesktopSupported());
-        if (collect.size() > 0 && Desktop.isDesktopSupported() && desktop.isSupported(Desktop.Action.BROWSE)) {
 
-            desktop.browse(new URL("www.youtube.com").toURI());
-        } else {
-            System.out.println("nahi chala");
+
+        if (collect.size() > 0) {
+            Runtime runtime = Runtime.getRuntime();
+
+            if (System.getProperty("os.name").contains("Windows")) {
+                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else if (System.getProperty("os.name").contains("Mac")) {
+                runtime.exec("open " + url);
+
+            }
+
         }
-
-        return collect;
     }
 }
