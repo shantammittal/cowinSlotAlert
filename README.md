@@ -1,5 +1,17 @@
-# cowinSlotAlert
+#CowinSlotAlert
 
+#Table of content
+
+- PreRequisite
+- FAQ
+- Run
+
+# PreRequisite
+
+- Java 11
+- Maven 3.+
+
+#FAQ
  What this app does ?
  
 - It Alerts you by making a sound once the slot is available. In this case it plays a youtube video.
@@ -19,11 +31,11 @@
 
  What if I want to hit the server every second ?
 
- - There is a limit on how many times you can hit cowin server. Post which your ip will be blocked temperoraily/permanently (not sure of permanent. But yes it will be blocked).
+ - There is a limit on how many times you can hit cowin server. Post which your ip will be blocked temporarily/permanently (not sure of permanent. But yes it will be blocked).
  - We dont want to swarm the server. Be responsible !!
 
 
-Technical Details -
+# Technical Details
 
  Why are we fetching the data for current date only and not for future dates?
 - The api always returns session for next five day from current date. Hence I am making single call with current date.
@@ -37,5 +49,9 @@ What is the age limit parameter in application.properties?
 What does the pincode property do ?
 - Change this to the pincode where you want to find slots.
 
-
-
+# Run
+- mvn clean install
+- Change pincode in application.properties to your current location
+- Change age to 18, 45 or "" if you want to search for both group 
+- Using Intellij IDE - Run CowinBookingApplication
+- or java -jar cowinBooking-*.jar

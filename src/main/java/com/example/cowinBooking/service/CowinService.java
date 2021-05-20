@@ -13,11 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,7 +31,7 @@ public class CowinService {
     @Value("${pinCode}")
     String pinCode;
 
-    @Value("${ageLimit}")
+    @Value("${age}")
     String ageLimit;
 
     @Value("${url}")
@@ -43,13 +40,20 @@ public class CowinService {
     @Scheduled(cron = "${frequency}")
     public void findByPinCodeAndDateCron() throws IOException, URISyntaxException {
         log.info(System.getProperty("os.name"));
+        log.info("age: " + ageLimit);
         String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/json");
         headers.set("user-agent", "Mozilla/5.0");
         HttpEntity request = new HttpEntity(headers);
         ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList = restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=%s&date=%s", pinCode, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
-        Stream<CalendarResponseSchema> calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() >= Integer.parseInt(ageLimit)).count() > 0);
+        Stream<CalendarResponseSchema> calendarResponseSchemaStream;
+
+        if (ageLimit.equals("")) {
+            calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0).count() > 0);
+        } else {
+            calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() >= Integer.parseInt(ageLimit)).count() > 0);
+        }
         List<CalendarResponseSchema> collect = calendarResponseSchemaStream.collect(Collectors.toList());
 
 
