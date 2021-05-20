@@ -17,25 +17,25 @@ Since the alert is coming from your own machine. You would need to run it on you
 The app hits cowin server every 2 minutes. This can be reduced to every minutes is required.
 By changing the frequency property in application.properties to "0 * * * * *"
 
-- What if I want to hit the server every second ?
+-What if I want to hit the server every second ?
 
-There is a limit on how many times you can hit cowin server. Post which your ip will be blocked probably temperoraily.
-We dont want to swarm the server. Be responsible !!
+ There is a limit on how many times you can hit cowin server. Post which your ip will be blocked probably temperoraily.
+ We dont want to swarm the server. Be responsible !!
 
 
 Technical Details -
 
-- Why are we fetching the data for current date only and not for future dates?
-The api always returns session for next five day from current date. Hence I am making single call with current date.
+Why are we fetching the data for current date only and not for future dates?
+ The api always returns session for next five day from current date. Hence I am making single call with current date.
 
-- What is the age limit parameter in application.properties?
-Filter the data as per center min age limit. 
-For example if you want to find slots for 45  above set age=45
-If you want to find slots for 18 above set age=18
-If you want to find for both age group you should comment this property.
+What is the age limit parameter in application.properties?
+ Filter the data as per center min age limit. 
+ For example if you want to find slots for 45  above set age=45
+ If you want to find slots for 18 above set age=18
+ If you want to find for both age group you should comment this property.
 
-- What does the pincode property do ?
-Change this to the pincode where you want to find slots.
+What does the pincode property do ?
+ Change this to the pincode where you want to find slots.
 
 
 
