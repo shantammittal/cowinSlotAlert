@@ -1,6 +1,6 @@
-#CowinSlotAlert
+# CowinSlotAlert
 
-#Table of content
+# Table of content
 
 - PreRequisite
 - FAQ
