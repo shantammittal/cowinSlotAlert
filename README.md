@@ -12,7 +12,7 @@
 - Maven 3.+
 - Windows, Mac
 
-#FAQ
+# FAQ
  What this app does ?
  
 - It alerts you by playing a video on your machine.
