@@ -5,6 +5,7 @@
 - PreRequisite
 - FAQ
 - Run
+- Technical Details
 
 # PreRequisite
 
@@ -38,6 +39,10 @@
 
  - There is a limit on how many times you can hit cowin server. Post which your ip will be blocked temporarily/permanently (not sure of permanent. But yes it will be blocked).
  - We dont want to swarm the server. Be responsible !!
+ 
+ Do I need to enter both pincode & district Id ?
+ - No, you only need to enter one of the values. Depending upon whether you want to find vaccination in your pincode or district wide.
+ - In case both the values are entered, DistrictId takes precedence!!
 
 
 # Technical Details
@@ -45,14 +50,17 @@
  Why are we fetching the data for current date only and not for future dates?
 - The api always returns session for next five day from current date. Hence I am making single call with current date.
 
-What is the age parameter in application.properties?
+ What is the age parameter in application.properties?
 - You can configure the parameter as per below info
 - 18  : if you want slots for age group [18-44]
 - 45  : if you want slots for age group 45+
 - leave it blank : if you want slots for age group 18+
 
-What does the pincode property do ?
+ What does the pincode property do ?
 - Change this to the pincode where you want to find slots.
+
+ What does the districtId property do ?
+- Searches by districtId ex - 3. Note: districtId takes precdence over pincode.
 
 # Run
 - mvn clean install

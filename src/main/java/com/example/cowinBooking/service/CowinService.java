@@ -31,6 +31,9 @@ public class CowinService {
     @Value("${pinCode}")
     String pinCode;
 
+    @Value("${districtId}")
+    String districtId;
+
     @Value("${age}")
     String ageLimit;
 
@@ -39,21 +42,30 @@ public class CowinService {
 
     @Scheduled(cron = "${frequency}")
     public void findByPinCodeAndDateCron() throws IOException, URISyntaxException {
+
         String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/json");
         headers.set("user-agent", "Mozilla/5.0");
         HttpEntity request = new HttpEntity(headers);
-        ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList = restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=%s&date=%s", pinCode, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
+        ResponseEntity<CalendarResponseSchemaList> calendarResponseSchemaList;
+        if (!(districtId == null || districtId.isEmpty())) {
+            log.info("findByDistrict");
+            calendarResponseSchemaList = findByDistrict(localDate, request);
+        } else {
+            log.info("findPincode");
+            calendarResponseSchemaList = findByPinCode(localDate, request);
+        }
+
         Stream<CalendarResponseSchema> calendarResponseSchemaStream;
 
-        if (ageLimit.equals("")) {
+        if (ageLimit == null || ageLimit.isEmpty()) {
             calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0).count() > 0);
         } else {
             calendarResponseSchemaStream = calendarResponseSchemaList.getBody().getCenters().stream().filter(calendarResponseSchema -> calendarResponseSchema.getSessions().stream().filter(session -> session.getAvailable_capacity() > 0 && session.getMin_age_limit() == Integer.parseInt(ageLimit)).count() > 0);
         }
         List<CalendarResponseSchema> collect = calendarResponseSchemaStream.collect(Collectors.toList());
-
+        log.info("size = " + collect.size());
 
         if (collect.size() > 0) {
             Runtime runtime = Runtime.getRuntime();
@@ -67,4 +79,13 @@ public class CowinService {
             }
         }
     }
+
+    ResponseEntity<CalendarResponseSchemaList> findByPinCode(String localDate, HttpEntity request) {
+        return restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=%s&date=%s", pinCode, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
+    }
+
+    ResponseEntity<CalendarResponseSchemaList> findByDistrict(String localDate, HttpEntity request) {
+        return restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=%s&date=%s", districtId, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
+    }
+
 }
