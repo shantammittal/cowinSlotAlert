@@ -1,7 +1,8 @@
 package com.example.cowinBooking;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -11,7 +12,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class CowinBookingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CowinBookingApplication.class, args);
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(CowinBookingApplication.class);
+		builder.headless(false);
+		ConfigurableApplicationContext context = builder.run(args);
 	}
-
 }

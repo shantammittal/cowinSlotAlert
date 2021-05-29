@@ -13,8 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -41,7 +40,7 @@ public class CowinService {
     String url;
 
     @Scheduled(cron = "${frequency}")
-    public void findByPinCodeAndDateCron() throws IOException, URISyntaxException {
+    public void findByPinCodeAndDateCron() throws Exception {
 
         String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         HttpHeaders headers = new HttpHeaders();
@@ -73,6 +72,7 @@ public class CowinService {
             if (System.getProperty("os.name").contains("Windows")) {
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + "https://selfregistration.cowin.gov.in/");
+                trayNotification();
             } else if (System.getProperty("os.name").contains("Mac")) {
                 runtime.exec("open " + url);
                 runtime.exec("open " + "https://selfregistration.cowin.gov.in/");
@@ -86,6 +86,20 @@ public class CowinService {
 
     ResponseEntity<CalendarResponseSchemaList> findByDistrict(String localDate, HttpEntity request) {
         return restTemplate.exchange(String.format("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=%s&date=%s", districtId, localDate), HttpMethod.GET, request, CalendarResponseSchemaList.class);
+    }
+
+    public void trayNotification() throws Exception {
+        Image image = Toolkit.getDefaultToolkit().createImage("");
+        SystemTray tray = SystemTray.getSystemTray();
+
+        TrayIcon trayIcon = new TrayIcon(image, "Slots");
+
+        trayIcon.setImageAutoSize(true);
+
+        trayIcon.setToolTip("Slots available");
+        tray.add(trayIcon);
+
+        trayIcon.displayMessage("Slot available ", "notification", TrayIcon.MessageType.INFO);
     }
 
 }
